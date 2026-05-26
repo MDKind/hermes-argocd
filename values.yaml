@@ -30,8 +30,9 @@ resources:
 # Secrets (tokens, OAuth) come from existingSecret env vars, not here.
 config:
   model:
-    default: gemini-2.5-flash
-    provider: google-gemini-cli
+    default: mlx-community/Qwen3.5-9B-MLX-4bit
+    provider: custom
+    base_url: http://192.168.1.121:8080/v1
     context_length: 262144
 
   providers:
@@ -40,10 +41,9 @@ config:
       stale_timeout_seconds: 300
 
   fallback_providers:
-    # 1st fallback: Mac Mini mlx_lm (LAN, fast, 262K context)
-    - provider: custom
-      model: mlx-community/Qwen3.5-9B-MLX-4bit
-      base_url: http://192.168.1.121:8080/v1
+    # 1st fallback: Gemini 2.5 Flash (free CLI, quota-limited)
+    - provider: google-gemini-cli
+      model: gemini-2.5-flash
     # 2nd fallback: LM Studio on Windows PC via k3s ClusterIP service (Tailscale)
     - provider: custom
       model: gemma-4-26b-a4b-it
