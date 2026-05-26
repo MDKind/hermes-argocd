@@ -1,0 +1,15 @@
+apiVersion: v2
+name: hermes
+description: Hermes AI agent — Telegram/Discord gateway with LLM routing and MCP toolsets
+type: application
+version: 0.1.0
+appVersion: "0.14.0"
+keywords:
+  - hermes
+  - ai
+  - llm
+  - telegram
+sources:
+  - https://github.com/NousResearch/hermes-agent
+maintainers:
+  - name: lorded

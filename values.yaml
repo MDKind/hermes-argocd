@@ -1,0 +1,120 @@
+image:
+  repository: lorded/hermes
+  tag: "0.14.0"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+# Name of an existing Secret with keys:
+#   TELEGRAM_BOT_TOKEN          — bot token from @BotFather
+#   TELEGRAM_ALLOWED_USERS      — comma-separated Telegram user IDs
+#   HERMES_AUTH_JSON_BOOTSTRAP  — JSON content of google_oauth.json
+existingSecret: hermes-secrets
+
+persistence:
+  enabled: true
+  storageClass: "local-path"
+  size: 5Gi
+  accessMode: ReadWriteOnce
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 512Mi
+  limits:
+    cpu: "2"
+    memory: 2Gi
+
+# ── Hermes config.yaml ────────────────────────────────────────────────────────
+# All keys here are rendered verbatim into /opt/data/config.yaml.
+# Secrets (tokens, OAuth) come from existingSecret env vars, not here.
+config:
+  model:
+    default: gemini-2.5-flash
+    provider: google-gemini-cli
+    context_length: 262144
+
+  providers:
+    custom:
+      request_timeout_seconds: 360
+      stale_timeout_seconds: 300
+
+  fallback_providers:
+    # 1st fallback: Mac Mini mlx_lm (LAN, fast, 262K context)
+    - provider: custom
+      model: mlx-community/Qwen3.5-9B-MLX-4bit
+      base_url: http://192.168.1.121:8080/v1
+    # 2nd fallback: LM Studio on Windows PC via k3s ClusterIP service (Tailscale)
+    - provider: custom
+      model: gemma-4-26b-a4b-it
+      base_url: http://lmstudio.default.svc.cluster.local/v1
+
+  # MCP servers running in the rag-system namespace.
+  # Playwright uses SSE; the others use Streamable HTTP (default).
+  # Adjust transport: sse entries if a server speaks SSE only.
+  mcp_servers:
+    playwright:
+      url: "http://playwright-mcp.rag-system.svc.cluster.local:8931"
+      transport: sse
+      timeout: 300
+      connect_timeout: 15
+    duckduckgo:
+      url: "http://duckduckgo-mcp.rag-system.svc.cluster.local:8000"
+      timeout: 60
+    searxng:
+      url: "http://searxng-mcp.rag-system.svc.cluster.local:8000"
+      timeout: 60
+    github:
+      url: "http://github-mcp.rag-system.svc.cluster.local:8080"
+      timeout: 60
+    filesystem:
+      url: "http://filesystem-mcp.rag-system.svc.cluster.local:8000"
+      timeout: 60
+    python_repl:
+      url: "http://python-repl-mcp.rag-system.svc.cluster.local:8808"
+      timeout: 120
+    postgres:
+      url: "http://mcp-postgres.rag-system.svc.cluster.local:8808"
+      timeout: 60
+
+  platform_toolsets:
+    telegram:
+      - web
+      - browser
+      - terminal
+      - file
+      - vision
+      - skills
+      - todo
+      - memory
+      - code_execution
+      - messaging
+
+  agent:
+    max_turns: 60
+    gateway_timeout: 1800
+    restart_drain_timeout: 180
+    api_max_retries: 3
+    reasoning_effort: medium
+
+  terminal:
+    backend: local
+    timeout: 180
+    persistent_shell: true
+    lifetime_seconds: 300
+
+  compression:
+    enabled: true
+    threshold: 0.5
+    target_ratio: 0.2
+    protect_last_n: 20
+
+  approvals:
+    mode: manual
+    timeout: 60
+    cron_mode: deny
+
+  logging:
+    level: INFO
+    max_size_mb: 5
+    backup_count: 3

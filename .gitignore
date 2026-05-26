@@ -1,0 +1,41 @@
+# ── Kubernetes credentials ─────────────────────────────────────────────────────
+k3s/kubeconfig.yaml
+kubeconfig
+kubeconfig.yaml
+*.kubeconfig
+
+# ── Site-specific Helm overrides (private IPs, cluster-specific settings) ──────
+# values-tr.yaml explicitly states it must NOT be committed to a public repo.
+values-tr.yaml
+values-*.local.yaml
+
+# ── Environment files / secrets ────────────────────────────────────────────────
+.env
+.env.*
+*.env
+!.env.example
+
+# ── OAuth & API tokens ─────────────────────────────────────────────────────────
+google_oauth.json
+*_oauth.json
+*_token.json
+
+# ── TLS / private key material ─────────────────────────────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# ── Rendered Helm output (may contain secrets) ─────────────────────────────────
+helm-output/
+rendered/
+
+# ── OS / editor noise ──────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/

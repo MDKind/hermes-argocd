@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hermes
+  namespace: argocd
+  # Keep the app when deleted from git (prevents accidental data loss)
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/MDKind/hermes-argocd.git
+    targetRevision: main
+    path: .
+    helm:
+      valueFiles:
+        - values.yaml
+      # Site-specific overrides that must not be committed to git go here inline.
+      # Example: override the image tag or Mac Mini IP without touching values.yaml.
+      # values: |
+      #   image:
+      #     tag: "0.14.0"
+      #   config:
+      #     fallback_providers:
+      #       - provider: custom
+      #         model: mlx-community/Qwen3.5-9B-MLX-4bit
+      #         base_url: http://192.168.1.121:8080/v1
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: hermes
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: false    # never auto-delete PVC or Secret
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
