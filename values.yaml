@@ -50,31 +50,27 @@ config:
       base_url: http://lmstudio.default.svc.cluster.local/v1
 
   # MCP servers running in the rag-system namespace.
-  # Playwright uses SSE; the others use Streamable HTTP (default).
-  # Adjust transport: sse entries if a server speaks SSE only.
+  # Playwright uses SSE at /sse; the others use Streamable HTTP at /mcp.
   mcp_servers:
     playwright:
-      url: "http://playwright-mcp.rag-system.svc.cluster.local:8931"
+      url: "http://playwright-mcp.rag-system.svc.cluster.local:8931/sse"
       transport: sse
       timeout: 300
       connect_timeout: 15
     duckduckgo:
-      url: "http://duckduckgo-mcp.rag-system.svc.cluster.local:8000"
+      url: "http://duckduckgo-mcp.rag-system.svc.cluster.local:8000/mcp"
       timeout: 60
     searxng:
-      url: "http://searxng-mcp.rag-system.svc.cluster.local:8000"
-      timeout: 60
-    github:
-      url: "http://github-mcp.rag-system.svc.cluster.local:8080"
+      url: "http://searxng-mcp.rag-system.svc.cluster.local:8000/mcp"
       timeout: 60
     filesystem:
-      url: "http://filesystem-mcp.rag-system.svc.cluster.local:8000"
+      url: "http://filesystem-mcp.rag-system.svc.cluster.local:8000/mcp"
       timeout: 60
     python_repl:
-      url: "http://python-repl-mcp.rag-system.svc.cluster.local:8808"
+      url: "http://python-repl-mcp.rag-system.svc.cluster.local:8808/mcp"
       timeout: 120
     postgres:
-      url: "http://mcp-postgres.rag-system.svc.cluster.local:8808"
+      url: "http://mcp-postgres.rag-system.svc.cluster.local:8808/mcp"
       timeout: 60
 
   platform_toolsets:
