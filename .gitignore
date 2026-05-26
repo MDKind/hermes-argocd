@@ -32,6 +32,9 @@ google_oauth.json
 helm-output/
 rendered/
 
+# ── Claude Code ────────────────────────────────────────────────────────────────
+.claude/
+
 # ── OS / editor noise ──────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
