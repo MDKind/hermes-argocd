@@ -90,7 +90,7 @@ config:
     max_turns: 60
     gateway_timeout: 1800
     restart_drain_timeout: 180
-    api_max_retries: 3
+    api_max_retries: 6
     reasoning_effort: medium
 
   terminal:
