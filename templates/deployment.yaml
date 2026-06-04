@@ -49,6 +49,34 @@ spec:
             - name: data
               mountPath: /opt/data
       containers:
+        - name: hermes-dashboard
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/opt/hermes/.venv/bin/hermes"]
+          args: ["dashboard", "--host", "0.0.0.0", "--insecure", "--tui", "--no-open", "--port", "9119"]
+          env:
+            - name: HERMES_DASHBOARD_SESSION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret }}
+                  key: HERMES_DASHBOARD_SESSION_TOKEN
+          ports:
+            - containerPort: 9119
+              name: dashboard
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+            - name: config
+              mountPath: /opt/data/config.yaml
+              subPath: config.yaml
+              readOnly: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
         - name: hermes
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}

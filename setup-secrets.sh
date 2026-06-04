@@ -23,6 +23,12 @@ HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 TELEGRAM_BOT_TOKEN=$(grep -E '^TELEGRAM_BOT_TOKEN=' "$HERMES_HOME/.env" | cut -d= -f2-)
 TELEGRAM_ALLOWED_USERS=$(grep -E '^TELEGRAM_ALLOWED_USERS=' "$HERMES_HOME/.env" | cut -d= -f2-)
 GOOGLE_OAUTH_JSON=$(cat "$HERMES_HOME/auth/google_oauth.json")
+DASHBOARD_TOKEN=$(grep -E '^HERMES_DASHBOARD_SESSION_TOKEN=' "$HERMES_HOME/.env" | cut -d= -f2- || true)
+if [[ -z "$DASHBOARD_TOKEN" ]]; then
+  DASHBOARD_TOKEN=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+  echo "HERMES_DASHBOARD_SESSION_TOKEN=$DASHBOARD_TOKEN" >> "$HERMES_HOME/.env"
+  echo "Generated new dashboard token and saved to $HERMES_HOME/.env"
+fi
 
 if [[ -z "$TELEGRAM_BOT_TOKEN" ]]; then
   echo "ERROR: TELEGRAM_BOT_TOKEN not found in $HERMES_HOME/.env" >&2
@@ -46,6 +52,7 @@ kubectl create secret generic "$SECRET_NAME" \
   --from-literal="TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN" \
   --from-literal="TELEGRAM_ALLOWED_USERS=$TELEGRAM_ALLOWED_USERS" \
   --from-literal="HERMES_AUTH_JSON_BOOTSTRAP=$GOOGLE_OAUTH_JSON" \
+  --from-literal="HERMES_DASHBOARD_SESSION_TOKEN=$DASHBOARD_TOKEN" \
   --save-config \
   --dry-run=client -o yaml \
   | kubectl apply -f -

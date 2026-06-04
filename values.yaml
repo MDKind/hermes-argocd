@@ -25,6 +25,11 @@ resources:
     cpu: "2"
     memory: 2Gi
 
+dashboard:
+  ingress:
+    enabled: true
+    host: "dashboard.hermes.dev.tr"
+
 # ── Hermes config.yaml ────────────────────────────────────────────────────────
 # All keys here are rendered verbatim into /opt/data/config.yaml.
 # Secrets (tokens, OAuth) come from existingSecret env vars, not here.
