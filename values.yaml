@@ -35,10 +35,9 @@ dashboard:
 # Secrets (tokens, OAuth) come from existingSecret env vars, not here.
 config:
   model:
-    default: mlx-community/Qwen3.5-9B-MLX-4bit
+    default: qwen3.7-max
     provider: custom
-    base_url: http://192.168.1.121:8080/v1
-    context_length: 262144
+    base_url: http://qwen-proxy.rag-system.svc.cluster.local:3264/api
 
   providers:
     custom:
@@ -46,10 +45,10 @@ config:
       stale_timeout_seconds: 300
 
   fallback_providers:
-    # 1st fallback: Qwen 3.7 Max via FreeQwenApi proxy (chat.qwen.ai session)
+    # 1st fallback: Mac Mini mlx_lm (local, Qwen3.5-9B, 262K ctx)
     - provider: custom
-      model: qwen3.7-max
-      base_url: http://qwen-proxy.rag-system.svc.cluster.local:3264/api
+      model: mlx-community/Qwen3.5-9B-MLX-4bit
+      base_url: http://192.168.1.121:8080/v1
     # 2nd fallback: Gemini 2.5 Flash (free CLI, quota-limited)
     - provider: google-gemini-cli
       model: gemini-2.5-flash
