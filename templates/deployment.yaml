@@ -59,6 +59,10 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.existingSecret }}
                   key: HERMES_DASHBOARD_SESSION_TOKEN
+            # Point HOME to the PVC so ~/.qwen/oauth_creds.json and other
+            # user-level auth files survive pod restarts.
+            - name: HOME
+              value: /opt/data/home
           ports:
             - containerPort: 9119
               name: dashboard
