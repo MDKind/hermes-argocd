@@ -46,10 +46,14 @@ config:
       stale_timeout_seconds: 300
 
   fallback_providers:
-    # 1st fallback: Gemini 2.5 Flash (free CLI, quota-limited)
+    # 1st fallback: Qwen 3.7 Max via FreeQwenApi proxy (chat.qwen.ai session)
+    - provider: custom
+      model: qwen3.7-max
+      base_url: http://qwen-proxy.rag-system.svc.cluster.local:3264/api
+    # 2nd fallback: Gemini 2.5 Flash (free CLI, quota-limited)
     - provider: google-gemini-cli
       model: gemini-2.5-flash
-    # 2nd fallback: LM Studio on Windows PC via k3s ClusterIP service (Tailscale)
+    # 3rd fallback: LM Studio on Windows PC via k3s ClusterIP service (Tailscale)
     - provider: custom
       model: gemma-4-26b-a4b-it
       base_url: http://lmstudio.default.svc.cluster.local/v1
