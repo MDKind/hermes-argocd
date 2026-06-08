@@ -45,14 +45,10 @@ config:
       stale_timeout_seconds: 300
 
   fallback_providers:
-    # 1st fallback: Mac Mini mlx_lm (local, Qwen3-4B, 128K ctx, ~2.5x faster than 9B)
-    - provider: custom
-      model: mlx-community/Qwen3-4B-4bit
-      base_url: http://192.168.1.121:8080/v1
-    # 2nd fallback: Gemini 2.5 Flash (free CLI, quota-limited)
+    # 1st fallback: Gemini 2.5 Flash (free CLI, quota-limited)
     - provider: google-gemini-cli
       model: gemini-2.5-flash
-    # 3rd fallback: LM Studio on Windows PC via k3s ClusterIP service (Tailscale)
+    # 2nd fallback: LM Studio on Windows PC via k3s ClusterIP service (Tailscale)
     - provider: custom
       model: gemma-4-26b-a4b-it
       base_url: http://lmstudio.default.svc.cluster.local/v1
