@@ -24,6 +24,37 @@ spec:
       securityContext:
         # s6-overlay (PID 1 = /init) handles privilege dropping to UID 10000
         runAsNonRoot: false
+      initContainers:
+        - name: setup-ssh
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              # Copy SSH keys from PVC (home/) to /root/.ssh so that SSH commands
+              # run as root (the actual process user) can authenticate to Pi5.
+              # HOME is /opt/data/home but SSH resolves config via the real UID's
+              # home directory (/root), not $HOME — so both paths must be populated.
+              mkdir -p /root/.ssh
+              chmod 700 /root/.ssh
+              if [ -f /opt/data/home/.ssh/id_ed25519 ]; then
+                cp /opt/data/home/.ssh/id_ed25519 /root/.ssh/id_ed25519
+                chmod 600 /root/.ssh/id_ed25519
+              fi
+              if [ -f /opt/data/home/.ssh/config ]; then
+                cp /opt/data/home/.ssh/config /root/.ssh/config
+                chmod 600 /root/.ssh/config
+              fi
+              if [ -f /opt/data/home/.ssh/known_hosts ]; then
+                cp /opt/data/home/.ssh/known_hosts /root/.ssh/known_hosts
+                chmod 600 /root/.ssh/known_hosts
+              fi
+          volumeMounts:
+            - name: data
+              mountPath: /opt/data
+            - name: root-ssh
+              mountPath: /root/.ssh
       containers:
         - name: hermes
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -75,6 +106,9 @@ spec:
               mountPath: /opt/data/config.yaml
               subPath: config.yaml
               readOnly: true
+            # SSH keys for root — populated by setup-ssh initContainer from PVC.
+            - name: root-ssh
+              mountPath: /root/.ssh
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
@@ -94,3 +128,5 @@ spec:
         - name: config
           configMap:
             name: {{ include "hermes.fullname" . }}-config
+        - name: root-ssh
+          emptyDir: {}
