@@ -43,6 +43,7 @@ config:
 
   providers:
     custom:
+      api_key: no-key-required
       request_timeout_seconds: 360
       stale_timeout_seconds: 300
 
