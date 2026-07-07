@@ -35,7 +35,7 @@ dashboard:
 # Secrets (tokens, OAuth) come from existingSecret env vars, not here.
 config:
   model:
-    default: qwen3.7-max
+    default: qwen3-max
     provider: custom
     base_url: http://qwen-proxy.rag-system.svc.cluster.local:3264/api
 
