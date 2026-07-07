@@ -44,15 +44,6 @@ config:
       request_timeout_seconds: 360
       stale_timeout_seconds: 300
 
-  fallback_providers:
-    # 1st fallback: Gemini 2.5 Flash (free CLI, quota-limited)
-    - provider: google-gemini-cli
-      model: gemini-2.5-flash
-    # 2nd fallback: LM Studio on Windows PC via k3s ClusterIP service (Tailscale)
-    - provider: custom
-      model: gemma-4-26b-a4b-it
-      base_url: http://lmstudio.default.svc.cluster.local/v1
-
   # MCP servers running in the rag-system namespace.
   # Playwright uses SSE at /sse; the others use Streamable HTTP at /mcp.
   mcp_servers:
