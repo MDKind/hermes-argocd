@@ -17,9 +17,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "hermes.fullname" . }}
+                name: {{ default (include "hermes.fullname" .) .Values.dashboard.ingress.serviceName }}
                 port:
-                  number: 9119
+                  number: {{ default 9119 .Values.dashboard.ingress.servicePort }}
   tls:
     - hosts:
         - {{ .Values.dashboard.ingress.host }}

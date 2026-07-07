@@ -3,7 +3,7 @@ image:
   tag: "0.15.2"
   pullPolicy: IfNotPresent
 
-replicaCount: 1
+replicaCount: 0
 
 # Name of an existing Secret with keys:
 #   TELEGRAM_BOT_TOKEN          — bot token from @BotFather
@@ -29,6 +29,8 @@ dashboard:
   ingress:
     enabled: true
     host: "dashboard.hermes.dev.tr"
+    serviceName: hermes-native
+    servicePort: 9119
 
 # ── Hermes config.yaml ────────────────────────────────────────────────────────
 # All keys here are rendered verbatim into /opt/data/config.yaml.
